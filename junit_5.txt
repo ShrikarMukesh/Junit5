@@ -1,0 +1,274 @@
+junit paltform:
+
+JUnit Platform
+Launches testing frameworks on the JVM
+Has TestEngine API used to build a testing framework that runs on the JUnit platform
+
+  -- Test Runners
+  -- Provides context to run tests
+  -- Test Engine
+  
+We can't directly use/interact with platform.
+API @Test, assert part of jupiter - while writing code we have to use jupiter
+Vintage - You can use the vintage to interact with older version of Junit.
+
+Unit Jupiter
+Blend of new programming model for writing tests and extension model for extensions
+Addition of new annotations like @BeforeEach, @AfterEach, @AfterAll, @BeforeAll etc.
+
+JUnit Vintage
+Provides support to execute previous JUnit version 3 and 4 tests on this new platform
+
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+
+@DisplayName
+@Disabled
+@Timeout(value = 500, unit = TimeUnit.MILLISECONDS)
+
+@RepeatedTest
+
+@Nested
+
+assertAll()
+assertThrow(expectedType, Executable)
+
+Conditional Execution:
+ 
+  @EnableOnOS(OS.LINUX)         @DisabledOnOS
+  @EnableOnJre()JRE.JAVA_11)    @DisabledOnJre
+  @EnableIf
+  @EnabledIfSystemProperty
+  @EnabledIfEnvironmentVariable
+
+Properties properties = System.getProperties();
+properties.forEach((k, v) -> System.out.println(k + ":" + v));
+
+
+Map<String, String> env = System.getenv();
+env.forEach((k, v) -> System.out.println(k + ":" + v));
+   
+
+
+
+Assumptions:
+  
+  assertTrue()
+  assertFalse()
+
+<plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-surefire-plugin</artifactId>
+	<version>3.0.0-M3</version>
+	<configuration>
+		<!-- include tags -->
+		<groups>integration, feature-168</groups>
+		<!-- exclude tags -->
+		<excludedGroups>slow</excludedGroups>
+	</configuration>
+</plugin>
+
+mvn -Dgroups="integration, fast, feature-168"
+
+mvn -DexcludedGroups="slow"
+
+MethodOrderer
+
+Alphanumeric
+OrderAnnotation
+Random
+Custom Order
+
+Alphanumeric
+1.1 It sorts test methods alphanumerically.
+
+@TestMethodOrder(MethodOrderer.Alphanumeric.class)
+
+
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class) 
+It sorts test methods based on the @Order values.
+
+
+@Order(2)
+
+@TestMethodOrder(MethodOrderer.Random.class)
+
+TestSuite in JUnit 5
+
+@SelectPackages("....")
+@SelectPackages({"..." , "..." })
+
+@SelectClasses(...)
+@SelectClasses({..., ..., ...})
+
+@RunWith(JUnitPlatform.class)
+
+@SelectPackages("....")
+@IncludePackages()
+@ExcludePackages()
+
+@IncludeTags()
+@ExcludeTags()
+
+
+In JUnit, you can organize the test cases into different categories, and run those categorized test cases with @Categories.ExcludeCategory or @Categories.IncludeCategory
+
+This @Categories annotation is available since JUnit 4.12
+
+ @Category(PerformanceTests.class)
+
+@Category({PerformanceTests.class, RegressionTests.class})
+public class ClassB {
+
+    @Test
+    public void test_b_1() {
+        assertThat(1 == 1, is(true));
+    }
+}
+
+
+@RunWith(Categories.class)
+@Categories.IncludeCategory(PerformanceTests.class)
+//Include multiple categories
+//@Categories.IncludeCategory({PerformanceTests.class, RegressionTests.class})
+@Suite.SuiteClasses({ClassA.class, ClassB.class, ClassC.class})
+public class PerformanceTestSuite {
+}
+
+
+@RunWith(Categories.class)
+@Categories.ExcludeCategory(PerformanceTests.class)
+@Suite.SuiteClasses({ClassA.class, ClassB.class, ClassC.class})
+public class ExcludePerformanceTestSuite {
+}
+
+<dependency>
+     <groupId>org.junit.jupiter</groupId>
+     <artifactId>junit-jupiter-engine</artifactId>
+     <version>5.1.1</version>
+     <scope>test</scope>
+</dependency>
+<dependency>
+     <groupId>org.junit.platform</groupId>
+     <artifactId>junit-platform-runner</artifactId>
+     <version> 1.1.1</version>
+     <scope>test</scope>
+</dependency>
+
+
+
+1. Junit 5 Parameterized Test
+Some times we may need to run same tests with different arguments or values, Junit 5 Parameterized tests make it possible to run a test multiple times with different arguments. They are declared just like regular @Test methods but use the @ParameterizedTest annotation instead of @Test annotation.
+
+1.1. Writing parameterized tests
+Following are the steps to create parameterized tests in Junit 5.
+
+Declare @ParameterizedTest to the test.
+Declare at least one source (example – @ValueSource) that will provide the arguments for each invocation of test.
+Consume the arguments in the test method .
+
+
+<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+			<version>${junit.jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+
+public class Junit5_Parameterized_Test {
+	
+	// This test will run sequentially 5 times with 1 argument each time
+    @ParameterizedTest
+    @ValueSource(ints = {8,4,2,6,10})
+    void test_int_arrays(int arg) {
+    	System.out.println("arg => "+arg);
+        assertTrue(arg % 2 == 0);
+    }   
+}
+
+
+1.2. Customizing Display Names in Parameterized tests
+By default, the display name of a parameterized test invocation contains the invocation index and the String representation of all arguments for that specific invocation. The following placeholders are supported within custom display names.
+
+Placeholder	Description
+{displayName}	placeholder for the display name of the method.
+{index}	placeholder for the current invocation index (starts from 1).
+{arguments}	placeholder for the complete, comma-separated arguments list.
+{0}, {1}, …?	placeholder for an individual argument.
+public class Junit5_CustomDisplayNames_Test {
+	
+    @ParameterizedTest(name="#{index}- Test with Argument={arguments}")
+    @ValueSource(ints = {8,4,2,6,10})
+    void test_int_arrays(int arg) {
+    	System.out.println("arg => "+arg);
+        assertTrue(arg % 2 == 0);
+    }  
+    
+    @ParameterizedTest(name="#{index} - Test with Argument={0}")
+    @ValueSource(strings = {"Peter King", "Arthur King", "Martin King"})
+    void test_string_arrays(String arg) {
+    	String searchKey = "King";
+    	
+    	System.out.println("arg => "+arg);
+        assertTrue(arg.contains(searchKey));
+    }  
+    
+    @ParameterizedTest(name="Test with argument - {arguments}")
+    @NullSource
+    void test_null_source(String arg) {
+    	
+    	System.out.println("arg => "+arg);
+        assertTrue(arg == null);
+    }   
+}
+
+https://javabydeveloper.com/junit-5-parameterized-tests-with-examples/#:~:text=1.1.&text=Following%20are%20the%20steps%20to,arguments%20in%20the%20test%20method%20.
+
+
+Add maven-surefire-report-plugin to pom.xml reporting element
+
+<reporting>
+	<plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-surefire-report-plugin</artifactId>
+			<version>2.22.0</version>
+		</plugin>
+	</plugins>
+</reporting>
+
+> mvn site
+
+Run mvn site command from the terminal. It will generate HTML reports in target/site directory.
+
+Open the surefire-report.html file in the browser. 
+
+
+site surefire-report:report
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  

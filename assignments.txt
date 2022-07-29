@@ -1,0 +1,38 @@
+Stack   => LIFO
+
+1) WAP to implement custom stack.
+
+     1) push(e)   => Adds element at the top of the stack  
+     2) e pop()   => Removes topmost element from stack and also returns it.
+     3) e peek()  => Reads topmost element without removing it
+     4) int size()  => Returns total no. of elements present in the stack.
+     5) boolean isEmpty()  => Returns true if stack is empty else returns false. 
+
+  public class MyStack<T> {
+ 
+      private LinkedList<T> data;
+
+  }
+
+2) UserAccountService 
+
+     1) boolean authenticate(email, password)  => Returns true if credentials are correct else return false.
+     2) boolean resetPasswordLink(String email)   => Returns true if email is already registered else return false.
+     3) boolean changePassword(email, oldPassword, newPassword)  =>  Returns true if password is changed successfully else returns false.
+
+
+3) Explore BinarySearch   => int arr[] and key.
+
+   For eg.   int arr [] = { 12, 45, 67, 89, 190, 234, 678 };
+                 int key = 89;
+                 if (key exists in an array)
+                     return index;
+                 else return -1;
+
+public class BinarySearch {
+
+     public int binarySearch(int arr[], int key) {
+	// logic of searching key in arr.
+     }
+}
+
